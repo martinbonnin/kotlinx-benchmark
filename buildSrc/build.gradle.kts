@@ -7,8 +7,9 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 kotlinDslPluginOptions {
-    experimentalWarning.set(false)
+    //experimentalWarning.set(false)
 }
