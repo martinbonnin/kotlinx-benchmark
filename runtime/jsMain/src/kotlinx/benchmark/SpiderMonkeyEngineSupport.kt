@@ -15,4 +15,4 @@ internal object SpiderMonkeyEngineSupport : StandaloneJsVmSupport() {
 }
 
 internal fun isSpiderMonkeyEngine(): Boolean =
-    js("globalThis.isIon !== 'undefined'") as Boolean
+     js("typeof globalThis.inIon !== 'undefined'") as Boolean

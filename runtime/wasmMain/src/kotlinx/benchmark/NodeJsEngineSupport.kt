@@ -3,14 +3,14 @@ package kotlinx.benchmark
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-@JsFun("(path, text) => require('fs').writeFileSync(path, text, 'utf8')")
-private external fun nodeJsWriteFile(path: String, text: String)
+private fun nodeJsWriteFile(path: String, text: String): Unit =
+    js("require('fs').writeFileSync(path, text, 'utf8')")
 
-@JsFun("(path) => require('fs').readFileSync(path, 'utf8')")
-private external fun nodeJsReadFile(path: String): String
+private fun nodeJsReadFile(path: String): String =
+    js("require('fs').readFileSync(path, 'utf8')")
 
-@JsFun("() => process.argv.slice(2).join(' ')")
-private external fun nodeJsArguments(): String
+private fun nodeJsArguments(): String =
+    js("process.argv.slice(2).join(' ')")
 
 internal object NodeJsEngineSupport : JsEngineSupport() {
     override fun writeFile(path: String, text: String) =
@@ -23,20 +23,15 @@ internal object NodeJsEngineSupport : JsEngineSupport() {
         nodeJsArguments().split(' ').toTypedArray()
 }
 
-private fun hrTimeToNs(hrTime: ExternalInterfaceType): Long {
-    val fromSeconds = getArrayElement(hrTime, 0).toDuration(DurationUnit.SECONDS)
-    val fromNanos = getArrayElement(hrTime, 1).toDuration(DurationUnit.NANOSECONDS)
+private fun hrTimeToNs(hrTime: JsArray<JsNumber>): Long {
+    val fromSeconds = hrTime[0]!!.toDouble().toDuration(DurationUnit.SECONDS)
+    val fromNanos = hrTime[1]!!.toDouble().toDuration(DurationUnit.NANOSECONDS)
     return (fromSeconds + fromNanos).inWholeNanoseconds
 }
 
-@JsFun("() => process")
-private external fun getProcess(): ExternalInterfaceType
+private fun getProcess(): JsAny = js("process")
 
-@JsFun("(process) => process.hrtime()")
-private external fun getHrTime(process: ExternalInterfaceType): ExternalInterfaceType
-
-@JsFun("(array, i) => array[i]")
-private external fun getArrayElement(array: ExternalInterfaceType, i: Int): Double
+private fun getHrTime(process: JsAny): JsArray<JsNumber> = js("process.hrtime()")
 
 internal inline fun nodeJsMeasureTime(block: () -> Unit): Long {
     val process = getProcess()
@@ -46,5 +41,5 @@ internal inline fun nodeJsMeasureTime(block: () -> Unit): Long {
     return hrTimeToNs(end) - hrTimeToNs(start)
 }
 
-@JsFun("() => (typeof process !== 'undefined') && (process.release.name === 'node')")
-internal external fun isNodeJsEngine(): Boolean
+internal fun isNodeJsEngine(): Boolean =
+    js("(typeof process !== 'undefined') && (process.release.name === 'node')")

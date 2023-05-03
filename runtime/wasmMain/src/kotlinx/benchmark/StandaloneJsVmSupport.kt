@@ -2,8 +2,8 @@ package kotlinx.benchmark
 
 import kotlin.time.Duration.Companion.milliseconds
 
-@JsFun("(path) => globalThis.read(path)")
-private external fun browserEngineReadFile(path: String): String
+private fun browserEngineReadFile(path: String): String =
+    js("globalThis.read(path)")
 
 internal abstract class StandaloneJsVmSupport : JsEngineSupport() {
     override fun writeFile(path: String, text: String) =
@@ -13,11 +13,11 @@ internal abstract class StandaloneJsVmSupport : JsEngineSupport() {
         browserEngineReadFile(path)
 }
 
-@JsFun("() => (typeof self !== 'undefined' ? self : globalThis).performance")
-private external fun getPerformance(): ExternalInterfaceType
+private fun getPerformance(): JsAny =
+    js("(typeof self !== 'undefined' ? self : globalThis).performance")
 
-@JsFun("(performance) => performance.now()")
-private external fun performanceNow(performance: ExternalInterfaceType): Double
+private fun performanceNow(performance: JsAny): Double =
+    js("performance.now()")
 
 internal inline fun standaloneJsVmMeasureTime(block: () -> Unit): Long {
     val performance = getPerformance()
