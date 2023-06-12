@@ -50,6 +50,8 @@ kotlin {
 }
 
 repositories {
+    maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev' }
+    mavenLocal()
     def kotlinDevUrl = rootProject.properties["kotlin_repo_url"]
     if (kotlinDevUrl != null) {
         maven { url = kotlinDevUrl }
