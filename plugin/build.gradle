@@ -21,7 +21,6 @@ plugins {
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.21.0'
 }
-
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'kotlinx.team.infra'
 
@@ -79,12 +78,18 @@ sourceSets {
         java.srcDirs = ['test/src']
         resources.srcDirs = ['test/resources']
     }
+    configureEach {
+        languageSettings.languageVersion = rootProject.properties["kotlin_language_version"]
+    }
 }
+
 
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-        apiVersion = "1.4" // the version of Kotlin embedded in Gradle
+//        apiVersion = "1.4" // the version of Kotlin embedded in Gradle
+        languageVersion = rootProject.properties["kotlin_language_version"]
+
     }
 }
 
@@ -149,3 +154,16 @@ if (project.findProperty("publication_repository") == "space") {
         }
     }
 }
+
+//allprojects {
+//    compileKotlin {
+//        kotlinOptions {
+//            languageVersion = "2.0"
+//        }
+//    }
+//    sourceSets {
+//        all {
+//            languageSettings.languageVersion = "2.0"
+//        }
+//    }
+//}
