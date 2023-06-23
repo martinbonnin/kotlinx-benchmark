@@ -15,9 +15,6 @@ kotlin {
 
     sourceSets {
         commonMain {
-            dependencies {
-                implementation(benchmarkRuntimeMetadata)
-            }
         }
         jvmMain {
             dependencies {
