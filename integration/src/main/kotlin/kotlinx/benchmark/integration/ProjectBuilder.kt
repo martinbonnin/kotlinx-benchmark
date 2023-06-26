@@ -47,6 +47,7 @@ private val buildScript = run {
         maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap' }
     }
     
+    def benchmarkRuntimeMetadata = files(${readFileList("runtime-metadata.txt")})
     def benchmarkRuntimeJvm = files(${readFileList("runtime-jvm.txt")})
     def benchmarkRuntimeJsIr = files(${readFileList("runtime-jsIr.txt")})
     def benchmarkRuntimeWasm = files(${readFileList("runtime-wasm.txt")})
