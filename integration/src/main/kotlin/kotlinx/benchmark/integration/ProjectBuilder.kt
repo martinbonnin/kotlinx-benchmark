@@ -40,7 +40,7 @@ private val buildScript = run {
         }
         dependencies {
             classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21'
-            classpath 'org.jetbrains.kotlinx:kotlinx-benchmark-plugin:0.4.9'
+            classpath 'org.jetbrains.kotlinx:kotlinx-benchmark-plugin:0.4.255-SNAPSHOT'
         }
     }
     
