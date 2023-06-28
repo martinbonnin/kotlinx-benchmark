@@ -19,18 +19,6 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.255-SNAPSHOT")
             }
         }
-        jvmMain {
-        }
-        jvmBenchmark {
-            dependsOn(jvmMain)
-        }
-        jsIrMain {
-        }
-        wasmMain {
-        }
-        nativeMain {
-            dependsOn(commonMain)
-        }
     }
 }
 

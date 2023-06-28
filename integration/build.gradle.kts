@@ -8,23 +8,6 @@ repositories {
 
 evaluationDependsOn(":kotlinx-benchmark-runtime")
 
-val Gradle.isConfigurationCacheAvailable
-    get() = try {
-        val startParameters = gradle.startParameter
-        startParameters.javaClass.getMethod("isConfigurationCache")
-            .invoke(startParameters) as? Boolean
-    } catch (_: Exception) {
-        null
-    } ?: false
-
-fun Project.getSystemProperty(key: String): String? {
-    return if (gradle.isConfigurationCacheAvailable) {
-        providers.systemProperty(key).forUseAtConfigurationTime().orNull
-    } else {
-        System.getProperty(key)
-    }
-}
-
 val runtime get() = project(":kotlinx-benchmark-runtime")
 val plugin get() = gradle.includedBuild("plugin")
 
