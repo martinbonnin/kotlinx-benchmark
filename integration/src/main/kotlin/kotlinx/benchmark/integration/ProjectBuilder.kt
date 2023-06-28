@@ -49,7 +49,6 @@ private val buildScript = run {
     
     repositories {
         mavenCentral()
-        maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap' }
         maven { url ${readFileList("runtime-maven-url.txt")} }
     }
     """.trimIndent()
