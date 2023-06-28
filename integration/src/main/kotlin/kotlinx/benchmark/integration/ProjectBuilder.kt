@@ -1,7 +1,5 @@
 package kotlinx.benchmark.integration
 
-import java.io.*
-
 class ProjectBuilder {
     private val configurations = mutableMapOf<String, BenchmarkConfiguration>()
     private val targets = mutableMapOf<String, BenchmarkTarget>()
@@ -36,7 +34,7 @@ private val buildScript = run {
     buildscript {
         repositories {
             mavenCentral()
-            maven { url ${readFileList("plugin-maven-url.txt")} }
+            maven { url '${System.getProperty("plugin-maven-url")}' }
         }
         dependencies {
             classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21'
@@ -49,16 +47,7 @@ private val buildScript = run {
     
     repositories {
         mavenCentral()
-        maven { url ${readFileList("runtime-maven-url.txt")} }
+        maven { url '${System.getProperty("runtime-maven-url")}' }
     }
     """.trimIndent()
-}
-
-private fun readFileList(fileName: String): String {
-    val resource = ProjectBuilder::class.java.classLoader.getResource(fileName)
-        ?: throw IllegalStateException("Could not find resource '$fileName'")
-    val files = File(resource.toURI())
-        .readLines()
-        .map { File(it).absolutePath.replace("\\", "\\\\") } // escape backslashes in Windows paths
-    return files.joinToString(", ") { "'$it'" }
 }
