@@ -34,8 +34,13 @@ benchmark {
 private val buildScript = run {
     """
     buildscript {
+        repositories {
+            mavenCentral()
+            maven { url ${readFileList("plugin-maven-url.txt")} }
+        }
         dependencies {
-            classpath files(${readFileList("plugin-classpath.txt")})
+            classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21'
+            classpath 'org.jetbrains.kotlinx:kotlinx-benchmark-plugin:0.4.9'
         }
     }
     
@@ -45,13 +50,8 @@ private val buildScript = run {
     repositories {
         mavenCentral()
         maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap' }
+        maven { url ${readFileList("runtime-maven-url.txt")} }
     }
-    
-    def benchmarkRuntimeMetadata = files(${readFileList("runtime-metadata.txt")})
-    def benchmarkRuntimeJvm = files(${readFileList("runtime-jvm.txt")})
-    def benchmarkRuntimeJsIr = files(${readFileList("runtime-jsIr.txt")})
-    def benchmarkRuntimeWasm = files(${readFileList("runtime-wasm.txt")})
-    def benchmarkRuntimeNative = files(${readFileList("runtime-native.txt")})
     """.trimIndent()
 }
 

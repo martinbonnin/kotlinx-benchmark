@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.target.*
-
 plugins {
     kotlin("jvm")
 }
@@ -27,47 +25,20 @@ fun Project.getSystemProperty(key: String): String? {
     }
 }
 
-val nativeTargetName
-    get() = when {
-        project.getSystemProperty("idea.active") == "true" -> if (HostManager.hostIsMac) "darwin" else "native"
-        HostManager.hostIsLinux -> "linuxX64"
-        HostManager.hostIsMingw -> "mingwX64"
-        HostManager.host == KonanTarget.MACOS_X64 -> "macosX64"
-        HostManager.host == KonanTarget.MACOS_ARM64 -> "macosArm64"
-        else -> error("Unknown host: ${HostManager.host}")
-    }
-
 val runtime get() = project(":kotlinx-benchmark-runtime")
 val plugin get() = gradle.includedBuild("plugin")
 
-val AbstractArchiveTask.archiveFilePath get() = archiveFile.get().asFile.path
-
-fun artifactsTask(artifact: String) = runtime.tasks.getByName<AbstractArchiveTask>("${artifact}Jar")
-fun artifactsTaskNativeKlibs() = runtime.tasks.getByName("compileKotlin${nativeTargetName.capitalize()}")
-
-fun Task.klibs(): String = outputs.files.filter { it.extension == "klib" }.joinToString("\n")
-
-fun IncludedBuild.classpath() = projectDir.resolve("build/createClasspathManifest")
-
 val createClasspathManifest by tasks.registering {
-    dependsOn(plugin.task(":createClasspathManifest"))
-    dependsOn(artifactsTask("jvm"))
-    dependsOn(artifactsTask("jsIr"))
-    dependsOn(artifactsTask("wasm"))
-    dependsOn(artifactsTask("allMetadata"))
-    dependsOn(artifactsTaskNativeKlibs())
+    dependsOn(plugin.task(":publishToBuildLocal"))
+    dependsOn(runtime.tasks.getByName("publishToBuildLocal"))
 
     val outputDir = file("$buildDir/$name")
     outputs.dir(outputDir)
     doLast {
         outputDir.apply {
             mkdirs()
-            resolve("plugin-classpath.txt").writeText(plugin.classpath().resolve("plugin-classpath.txt").readText())
-            resolve("runtime-metadata.txt").writeText(artifactsTask("allMetadata").archiveFilePath)
-            resolve("runtime-jvm.txt").writeText(artifactsTask("jvm").archiveFilePath)
-            resolve("runtime-jsIr.txt").writeText(artifactsTask("jsIr").archiveFilePath)
-            resolve("runtime-wasm.txt").writeText(artifactsTask("wasm").archiveFilePath)
-            resolve("runtime-native.txt").writeText(artifactsTaskNativeKlibs().klibs())
+            resolve("plugin-maven-url.txt").writeText(plugin.projectDir.resolve("build/maven").absolutePath)
+            resolve("runtime-maven-url.txt").writeText(rootProject.buildDir.resolve("maven").absolutePath)
         }
     }
 }

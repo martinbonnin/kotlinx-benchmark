@@ -16,35 +16,20 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(benchmarkRuntimeMetadata)
+                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.9")
             }
         }
         jvmMain {
-            dependencies {
-                implementation(benchmarkRuntimeJvm)
-            }
         }
         jvmBenchmark {
             dependsOn(jvmMain)
-            dependencies {
-                implementation(benchmarkRuntimeJvm)
-            }
         }
         jsIrMain {
-            dependencies {
-                implementation(benchmarkRuntimeJsIr)
-            }
         }
         wasmMain {
-            dependencies {
-                implementation(benchmarkRuntimeWasm)
-            }
         }
         nativeMain {
             dependsOn(commonMain)
-            dependencies {
-                implementation(benchmarkRuntimeNative)
-            }
         }
     }
 }
