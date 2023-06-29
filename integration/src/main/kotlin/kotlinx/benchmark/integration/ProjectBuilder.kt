@@ -1,8 +1,5 @@
 package kotlinx.benchmark.integration
 
-import kotlin.io.path.readText
-import kotlin.io.path.toPath
-
 class ProjectBuilder {
     private val configurations = mutableMapOf<String, BenchmarkConfiguration>()
     private val targets = mutableMapOf<String, BenchmarkTarget>()
@@ -37,7 +34,7 @@ private val buildScript = run {
     buildscript {
         repositories {
             mavenCentral()
-            maven { url '${readText("plugin-maven-url.txt")}' }
+            mavenLocal()
         }
         dependencies {
             classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21'
@@ -50,13 +47,7 @@ private val buildScript = run {
     
     repositories {
         mavenCentral()
-        maven { url '${readText("runtime-maven-url.txt")}' }
+        mavenLocal()
     }
     """.trimIndent()
-}
-
-private fun readText(fileName: String): String {
-    val resource = ProjectBuilder::class.java.classLoader.getResource(fileName)
-        ?: throw IllegalStateException("Could not find resource '$fileName'")
-    return resource.toURI().toPath().readText()
 }
